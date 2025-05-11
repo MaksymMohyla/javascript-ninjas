@@ -1,0 +1,9 @@
+node_modules
+.idea
+.vscode
+dist
+.env
+.env.local
+*.js.map
+.vercel
+test-output.log 2>&1
