@@ -71,7 +71,7 @@ Server running on http://localhost:8080
 
    ```bash
    cd ..
-   cd javascript-ninjas/backend
+   cd frontend
    ```
 
 9. **Install Dependencies**  
