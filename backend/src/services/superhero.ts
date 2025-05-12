@@ -22,6 +22,45 @@ class SuperheroServices {
     }
   }
 
+  public async getPageWithSuperHeroes(page: string = "1") {
+    try {
+      if (!/^\d+$/.test(page) || parseInt(page, 10) <= 0) {
+        throw new ApiError(400, "Page must be a positive integer string");
+      }
+
+      const superheroes =
+        await superheroRepository.getPageWithSuperHeroes(page);
+
+      if (!superheroes || superheroes.length === 0) {
+        throw new ApiError(404, "No superheroes found for the given page");
+      }
+
+      return superheroes;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        500,
+        "Internal server error: Failed to get superheroes by page",
+      );
+    }
+  }
+
+  public async getTotalPages() {
+    try {
+      return await superheroRepository.getTotalPages();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        500,
+        "Internal server error: Failed to get total pages",
+      );
+    }
+  }
+
   public async getSuperheroById(id: string) {
     try {
       const superhero = await superheroRepository.getSuperheroById(id);

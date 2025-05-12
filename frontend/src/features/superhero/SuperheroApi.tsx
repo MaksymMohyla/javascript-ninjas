@@ -14,6 +14,29 @@ const getAllSuperheroes = async () => {
   }
 };
 
+const getPageWithSuperheroes = async (page: string) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/list${page ? `?page=${page}` : ''}`
+    );
+    return response.data as Superhero[];
+  } catch (error) {
+    console.error('Error fetching superheroes:', error);
+    alert(`Error fetching superheroes: ${error}`);
+  }
+};
+
+const getTotalPages = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/totalPages`);
+
+    return response.data.pages as number;
+  } catch (error) {
+    console.error('Error fetching total pages count:', error);
+    alert(`Error fetching total pages count: ${error}`);
+  }
+};
+
 const getSuperhero = async (id: Superhero['id']) => {
   try {
     const response = await axios.get(`${baseUrl}/${id}`);
@@ -59,6 +82,8 @@ const deleteSuperhero = async (id: Superhero['id']) => {
 
 export default {
   getAllSuperheroes,
+  getPageWithSuperheroes,
+  getTotalPages,
   getSuperhero,
   createSuperhero,
   updateSuperhero,

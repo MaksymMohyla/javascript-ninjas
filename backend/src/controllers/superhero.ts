@@ -18,6 +18,30 @@ class SuperheroController {
     }
   }
 
+  public async getPageWithSuperHeroes(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const page = (req.query.page as string) || "1";
+      const superheroes = await superheroServices.getPageWithSuperHeroes(page);
+      res.status(200).json(superheroes);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getTotalPages(req: Request, res: Response, next: NextFunction) {
+    try {
+      const pages = await superheroServices.getTotalPages();
+
+      res.status(200).json({ pages });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public async getSuperheroById(
     req: Request,
     res: Response,

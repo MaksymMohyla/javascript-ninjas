@@ -10,6 +10,10 @@ const { isBodyValid } = commonMiddleware;
 
 router.get("/", superheroController.getAllSuperheroes);
 
+router.get("/list", superheroController.getPageWithSuperHeroes);
+
+router.get("/totalPages", superheroController.getTotalPages);
+
 router.get("/:id", superheroController.getSuperheroById);
 
 router.post(
