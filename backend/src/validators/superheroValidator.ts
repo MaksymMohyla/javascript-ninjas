@@ -1,11 +1,11 @@
 import joi from "joi";
 
 class SuperheroValidator {
-  private static nickname = joi.string().min(2).max(100).trim();
-  private static real_name = joi.string().min(2).max(100).trim();
-  private static origin_description = joi.string().min(2).max(500).trim();
-  private static superpowers = joi.string().min(2).max(200).trim();
-  private static catch_phrase = joi.string().min(2).max(100).trim();
+  private static nickname = joi.string().min(1).max(100).trim();
+  private static real_name = joi.string().min(1).max(100).trim();
+  private static origin_description = joi.string().min(1).max(500).trim();
+  private static superpowers = joi.string().min(1).max(200).trim();
+  private static catch_phrase = joi.string().min(1).max(100).trim();
   private static images = joi.array().items(joi.string().uri()).min(1);
 
   public static createSuperhero = joi.object({

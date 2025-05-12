@@ -9,11 +9,9 @@ import { Superhero } from '@/utils/types/superhero';
 const SuperheroCard = memo(function SuperheroCard({
   hero,
   onDelete,
-  onOpenDetails,
 }: {
   hero: Superhero;
   onDelete: (id: Superhero['id'], name: Superhero['nickname']) => void;
-  onOpenDetails: (id: Superhero['id']) => void;
 }) {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -37,12 +35,7 @@ const SuperheroCard = memo(function SuperheroCard({
         </CardBody>
         <CardFooter className="text-small flex flex-col gap-4">
           <b>{hero.nickname}</b>
-          <Link
-            onPress={() => onOpenDetails(hero.id)}
-            href={`/superhero/${hero.id}`}
-          >
-            Open details
-          </Link>
+          <Link href={`/superhero/${hero.id}`}>Open details</Link>
           <Button
             onPress={handleDeleteClick}
             isLoading={isDeleteLoading}

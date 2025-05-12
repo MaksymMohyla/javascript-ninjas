@@ -6,37 +6,34 @@ import api from '@/features/superhero/SuperheroApi';
 import { Loader } from '@/components/Loader.tsx';
 import { Superhero } from '@/utils/types/superhero';
 import SuperheroCard from '@/components/superheroCard';
+import { dummyData } from '@/features/superhero/SuperheroProvider';
 
 export default function ListPage() {
-  const { superheroList, setSuperheroList, setSelectedSuperhero } =
-    useContext(SuperheroContext);
+  const { superheroList, setSuperheroList } = useContext(SuperheroContext);
   const [isPageLoading, setIsPageLoading] = useState(false);
 
   useEffect(() => {
     setIsPageLoading(true);
     api
       .getAllSuperheroes()
-      .then((data) => setSuperheroList(data ?? []))
+      .then((data) => setSuperheroList(data ?? dummyData))
       .finally(() => setIsPageLoading(false));
   }, []);
 
   const handleDelete = useCallback(
     // if u don't wrap this function with useCallback, memoization of Card component won't work cause it expects this function as the prop
     async (id: Superhero['id'], name: Superhero['nickname']) => {
+      const confirmDelete = window.confirm(
+        `Are you sure you want to delete ${name}?`
+      );
+
+      if (!confirmDelete) return;
+
       await api.deleteSuperhero(id);
       setSuperheroList((prevList) => prevList.filter((hero) => hero.id !== id));
       alert(`Superhero ${name} deleted successfully`);
     },
     [setSuperheroList]
-  );
-
-  const handleOpenDetails = useCallback(
-    async (id: Superhero['id']) => {
-      const superhero = await api.getSuperhero(id);
-      setSelectedSuperhero(superhero ?? null);
-      console.log(superhero);
-    },
-    [setSelectedSuperhero]
   );
 
   return isPageLoading ? (
@@ -48,12 +45,7 @@ export default function ListPage() {
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         <ul className="gap-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {superheroList.map((hero) => (
-            <SuperheroCard
-              key={hero.id}
-              hero={hero}
-              onDelete={handleDelete}
-              onOpenDetails={handleOpenDetails}
-            />
+            <SuperheroCard key={hero.id} hero={hero} onDelete={handleDelete} />
           ))}
         </ul>
         <Pagination initialPage={1} total={3} showControls />

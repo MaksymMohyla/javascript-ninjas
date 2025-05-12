@@ -33,6 +33,21 @@ const createSuperhero = async (superhero: Omit<Superhero, 'id'>) => {
   }
 };
 
+const updateSuperhero = async (
+  id: Superhero['id'],
+  dto: Partial<Superhero>
+) => {
+  try {
+    const response = await axios.patch(`${baseUrl}/${id}/update`, dto);
+    console.log(response);
+
+    return response.data.updatedSuperhero as Superhero;
+  } catch (error) {
+    console.error('Error updating superhero:', error);
+    alert(`Error updating superhero: ${error}`);
+  }
+};
+
 const deleteSuperhero = async (id: Superhero['id']) => {
   try {
     await axios.delete(`${baseUrl}/${id}/delete`);
@@ -46,5 +61,6 @@ export default {
   getAllSuperheroes,
   getSuperhero,
   createSuperhero,
+  updateSuperhero,
   deleteSuperhero,
 };
