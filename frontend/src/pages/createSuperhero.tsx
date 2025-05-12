@@ -5,6 +5,7 @@ import { Form } from '@heroui/form';
 import { Input } from '@heroui/input';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '@/features/superhero/SuperheroApi';
 
 const fields = [
   'Nickname',
@@ -13,8 +14,6 @@ const fields = [
   'Superpowers',
   'Catch Phrase',
 ];
-
-const imagesFields = ['Image 1', 'Image 2', 'Image 3'];
 
 export default function CreateSuperhero() {
   const [formData, setFormData] = useState<Omit<Superhero, 'id'>>({
@@ -26,6 +25,7 @@ export default function CreateSuperhero() {
     images: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -40,16 +40,14 @@ export default function CreateSuperhero() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    formData.images.forEach((image, index) => {
-      const error = getUrlError(image);
-      if (error) {
-        newErrors[`image_${index + 1}`] = error;
-      }
-    });
+    const imgError = getUrlError(formData.images[0]);
+    if (imgError) {
+      newErrors.image = imgError;
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -57,10 +55,12 @@ export default function CreateSuperhero() {
       return;
     }
 
-    console.log('Form submitted successfully', formData);
+    setLoading(true);
+    await api.createSuperhero(formData);
 
     setErrors({});
-    alert('Superhero created successfully!');
+    setLoading(false);
+    alert(`Superhero ${formData.nickname} created successfully!`);
     navigate('/list');
   }
   return (
@@ -83,7 +83,7 @@ export default function CreateSuperhero() {
               }}
               label={field}
               labelPlacement="outside"
-              name={field.toLowerCase().replace(' ', '_')}
+              name={field}
               placeholder={`Enter ${field.toLowerCase()}`}
               type="text"
               value={formData[field.toLowerCase().replace(' ', '_')]}
@@ -96,34 +96,30 @@ export default function CreateSuperhero() {
             />
           ))}
 
-          {imagesFields.map((field, index) => (
-            <Input
-              key={index}
-              isRequired
-              errorMessage={({ validationDetails }) => {
-                if (validationDetails.valueMissing) {
-                  return `Image URL cannot be blank`;
-                }
-                return getUrlError(formData.images[index]);
-              }}
-              label={field}
-              labelPlacement="outside"
-              name={`image_${index}`}
-              placeholder={`Enter image URL`}
-              type="text"
-              value={formData.images[index] || ''}
-              onChange={(e) => {
-                const newImages = [...formData.images];
-                newImages[index] = e.target.value;
-                setFormData({ ...formData, images: newImages });
-              }}
-            />
-          ))}
+          <Input
+            isRequired
+            errorMessage={({ validationDetails }) => {
+              if (validationDetails.valueMissing) {
+                return `Image URL cannot be blank`;
+              }
+              return getUrlError(formData.images[0]);
+            }}
+            label="Profile Image URL"
+            labelPlacement="outside"
+            name="image"
+            placeholder={`Enter image URL`}
+            type="text"
+            value={formData.images[0]}
+            onChange={(e) => {
+              setFormData({ ...formData, images: [e.target.value] });
+            }}
+          />
         </div>
         <Button
           type="submit"
           color="primary"
           className="w-full max-w-[120px] mx-auto"
+          isLoading={loading}
         >
           Submit
         </Button>

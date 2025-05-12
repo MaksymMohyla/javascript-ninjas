@@ -177,17 +177,36 @@ const dummyData: Superhero[] = [
   },
 ];
 
+const dummyHero = {
+  id: '3',
+  nickname: 'Wonder Woman',
+  real_name: 'Diana Prince',
+  origin_description:
+    'Diana is the daughter of Hippolyta, Queen of the Amazons, and Zeus, the king of the Greek gods...',
+  superpowers:
+    'Superhuman strength, speed, durability, flight, combat skills, lasso of truth...',
+  catch_phrase:
+    'In the name of all that is good, your wrath upon this world is over.',
+  images: [
+    'https://m.media-amazon.com/images/M/MV5BMjEzYmZkNjktODBmYi00NzNkLWIzMjItMjhkMWZiZTZlN2MwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+    'https://static.wikia.nocookie.net/marvel_dc/images/b/bd/Wonder_Woman_Justice_League.jpg',
+    'https://hips.hearstapps.com/hmg-prod/images/wonder-woman-2-1623336737.jpg',
+  ],
+};
+
 export const SuperheroProvider: React.FC<Props> = ({ children }) => {
   const [superheroList, setSuperheroList] = useState<Superhero[]>(dummyData);
-  const [selectedSuperheroId, setSelectedSuperheroId] = useState('');
+  const [selectedSuperhero, setSelectedSuperhero] = useState<Superhero | null>(
+    dummyHero
+  );
 
   return (
     <SuperheroContext.Provider
       value={{
         superheroList: superheroList,
         setSuperheroList: setSuperheroList,
-        selectedSuperheroId: selectedSuperheroId,
-        setSelectedSuperheroId: setSelectedSuperheroId,
+        selectedSuperhero: selectedSuperhero,
+        setSelectedSuperhero: setSelectedSuperhero,
       }}
     >
       {children}

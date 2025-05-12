@@ -1,43 +1,59 @@
-import { useContext } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { SuperheroContext } from '@/features/superhero/SuperheroContext';
 import DefaultLayout from '@/layouts/default';
-import { Card, CardBody, CardFooter } from '@heroui/card';
-import { Image } from '@heroui/image';
-import { Link } from '@heroui/link';
 import { Pagination } from '@heroui/pagination';
-import { Button } from '@heroui/button';
+import api from '@/features/superhero/SuperheroApi';
+import { Loader } from '@/components/Loader.tsx';
+import { Superhero } from '@/utils/types/superhero';
+import SuperheroCard from '@/components/superheroCard';
 
 export default function ListPage() {
-  const { superheroList } = useContext(SuperheroContext);
+  const { superheroList, setSuperheroList, setSelectedSuperhero } =
+    useContext(SuperheroContext);
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
-  return (
+  useEffect(() => {
+    setIsPageLoading(true);
+    api
+      .getAllSuperheroes()
+      .then((data) => setSuperheroList(data ?? []))
+      .finally(() => setIsPageLoading(false));
+  }, []);
+
+  const handleDelete = useCallback(
+    // if u don't wrap this function with useCallback, memoization of Card component won't work cause it expects this function as the prop
+    async (id: Superhero['id'], name: Superhero['nickname']) => {
+      await api.deleteSuperhero(id);
+      setSuperheroList((prevList) => prevList.filter((hero) => hero.id !== id));
+      alert(`Superhero ${name} deleted successfully`);
+    },
+    [setSuperheroList]
+  );
+
+  const handleOpenDetails = useCallback(
+    async (id: Superhero['id']) => {
+      const superhero = await api.getSuperhero(id);
+      setSelectedSuperhero(superhero ?? null);
+      console.log(superhero);
+    },
+    [setSelectedSuperhero]
+  );
+
+  return isPageLoading ? (
+    <DefaultLayout>
+      <Loader />
+    </DefaultLayout>
+  ) : (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         <ul className="gap-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {superheroList.map((hero) => (
-            <li key={hero.id}>
-              <Card shadow="sm">
-                <CardBody className="overflow-visible p-0">
-                  <Image
-                    alt={`${hero.nickname} image`}
-                    className="w-full object-contain h-[260px]"
-                    radius="lg"
-                    shadow="sm"
-                    src={hero.images[0]}
-                    width="100%"
-                  />
-                </CardBody>
-                <CardFooter className="text-small flex flex-col gap-4">
-                  <b>{hero.nickname}</b>
-                  <Link href={''} target="_blank">
-                    Open details
-                  </Link>
-                  <Button size="sm" className="mx-2" color="danger">
-                    Delete
-                  </Button>
-                </CardFooter>
-              </Card>
-            </li>
+            <SuperheroCard
+              key={hero.id}
+              hero={hero}
+              onDelete={handleDelete}
+              onOpenDetails={handleOpenDetails}
+            />
           ))}
         </ul>
         <Pagination initialPage={1} total={3} showControls />
