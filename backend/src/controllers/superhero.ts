@@ -60,8 +60,8 @@ class SuperheroController {
         updateData,
       );
       res.status(200).json({
-        message: "Citation updated successfully",
-        updatedSuperhero,
+        message: "Superhero updated successfully",
+        updatedSuperhero: updatedSuperhero,
       });
     } catch (error) {
       next(error);

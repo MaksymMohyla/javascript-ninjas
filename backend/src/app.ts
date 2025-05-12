@@ -17,9 +17,9 @@ const PORT = configs.PORT || 5500;
 (async function testConnection() {
   try {
     await sequelize.authenticate();
-    console.log("✅ Підключення до бази даних успішне!");
+    console.log("✅ Successfully connected to database!");
   } catch (error) {
-    console.error("❌ Помилка підключення:", error);
+    console.error("❌ Error connecting database:", error);
   }
 })();
 

@@ -56,7 +56,14 @@ class SuperheroServices {
 
   public async updateSuperhero(id: string, dto: Partial<ISuperhero>) {
     try {
-      return await superheroRepository.updateSuperhero(id, dto);
+      const updatedSuperhero = await superheroRepository.updateSuperhero(
+        id,
+        dto,
+      );
+      if (!updatedSuperhero) {
+        throw new ApiError(404, "Superhero not found");
+      }
+      return updatedSuperhero;
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -70,6 +77,10 @@ class SuperheroServices {
 
   public async deleteSuperhero(id: string) {
     try {
+      const superhero = await superheroRepository.getSuperheroById(id);
+      if (!superhero) {
+        throw new ApiError(404, "Superhero not found");
+      }
       await superheroRepository.deleteSuperhero(id);
     } catch (error) {
       if (error instanceof ApiError) {
