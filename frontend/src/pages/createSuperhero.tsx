@@ -86,6 +86,7 @@ export default function CreateSuperhero() {
               name={field}
               placeholder={`Enter ${field.toLowerCase()}`}
               type="text"
+              // @ts-expect-error - ts can't guarantee than fields will be transformed correctly
               value={formData[field.toLowerCase().replace(' ', '_')]}
               onChange={(e) =>
                 setFormData({
