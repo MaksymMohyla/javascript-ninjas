@@ -8,7 +8,7 @@ import {
 } from '@heroui/navbar';
 import clsx from 'clsx';
 
-import { ThemeSwitch } from '@/components/theme-switch';
+import { ThemeSwitch } from '@/components/ThemeSwitch';
 import { Logo } from '@/components/icons';
 import { NavLink } from 'react-router-dom';
 
